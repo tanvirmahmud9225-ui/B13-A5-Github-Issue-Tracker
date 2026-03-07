@@ -88,8 +88,6 @@ document.getElementById("all-issue-btn").addEventListener('click', () => {
 
 
 
-
-
 // Issue Container
 async function issueLoad() {
     showLoading()
@@ -98,7 +96,6 @@ async function issueLoad() {
     hideLoading()
     issueData = data.data;
     displayIssue(data.data)
-
 }
 
 
@@ -134,7 +131,7 @@ function displayIssue(data) {
             priority = "bg-gray-400"
         }
 
-        issueCard.onclick =()=>onclick=issueDetail(card.id)
+        issueCard.onclick = () => onclick = issueDetail(card.id)
         issueCard.className = `bg-white shadow-xl ${borderColor} border-t-5  rounded-[8px]`;
         issueCard.innerHTML = `
              <div class=" border-b-2 border-gray-300">
@@ -149,9 +146,8 @@ function displayIssue(data) {
                             <p class="text-gray-500 text line-clamp-2 text-[0.9rem]">${card.description}</p>
                         </div>
 
-                        <div class="flex gap-2">
-                            <div class="badge badge-accent text-[0.8rem] py-5"><i class="fa-solid fa-bug"></i>${card.labels[0]}</div>
-                            <div class="badge badge-warning text-[0.8rem]  py-5"><i class="fa-solid fa-life-ring"></i>${card.labels[1] ? card.labels[1] : "Not Issue"}</div>
+                        <div class="flex gap-2 flex-wrap">
+                            ${createElements(card.labels)}
                         </div>
                     </div>
             </div>
@@ -164,28 +160,86 @@ function displayIssue(data) {
     });
 }
 
+function createElements(labels) {
+    const showLabels = labels.map(label => `<p class="badge badge-accent text-[0.8rem] py-5""><i class="fa-solid fa-bug"></i>${label}</p>`)
+    return showLabels.join(" ");
+}
 
-
+// <div class="badge badge-accent text-[0.8rem] py-5">${createElements(card.labels)}</div>
 
 
 issueLoad();
 
-async function issueDetail(id){
+
+
+
+
+
+
+
+
+// issue detail functionality
+async function issueDetail(id) {
     res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`)
     data = await res.json()
     displayIssueDetail(data.data)
 }
 
-function displayIssueDetail (details){
-    const detailIssueContainer = document.getElementById("details-issue-container")
-    
-    const detail = document.createElement("div");
 
-    detail.innerHTML = `   
-        <p>Tanvir</p>
-    `;
-    
-    detailIssueContainer.appendChild(detail);
+
+function displayIssueDetail(details) {
+
+    // let priorityColor = 0;
+    // if(details.priority === "")
+
+
+
+    let statusColor = 0;
+    if (details.status === "closed") {
+        statusColor = "bg-primary"
+    } else {
+        statusColor = "bg-success"
+    }
+
+
+
+    document.getElementById("details-issue-container").innerHTML = `
+           <div class=" max-w-3xl p-4 space-y-5">
+                <div>
+                    <h1 class="text-2xl font-bold mb-2">${details.title}</h1>
+                    <div class="flex items-center gap-4 text-[0.8rem]">
+                        <p class="badge ${statusColor} rounded-3xl px-4 text-white font-semibold">${details.status}</p>
+                        <div class="flex items-center gap-1">
+                            <div class="bg-gray-600 rounded-full p-1 w-1 h-1"></div>
+                            <p>Opened by ${details.author}</p>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <div class="bg-gray-600 rounded-full p-1 w-1 h-1"></div>
+                            <p>${details.createdAt}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-[0.8rem]">
+                    <p class="badge bg-gray-300 py-3.5 rounded-4xl "><i class="fa-solid fa-bug"></i>${details.labels[0]}</p >
+                    <p class="badge bg-gray-300 py-3.5 rounded-4xl"><i class="fa-solid fa-life-ring"></i> ${details.labels[1]}</p>
+                </div >
+                <div class="text-[0.8rem]">
+                    <p>${details.description}</p>
+                </div>
+                <div class="grid grid-cols-2 bg-gray-100 px-3 py-2 rounded-xl text-[0.8rem]">
+                    <div>
+                        <p>Assignee:</p>
+                        <p class="font-semibold">${details.author}</p>
+                    </div>
+                    <div class="text-[0.8rem]">
+                        <p>Priority:</p>
+                        <p class="badge bg-red-600 text-white rounded-4xl px-6 py-3 outline-0">${details.status}</p>
+                    </div>
+                </div>
+            </div >
+        `
+
+    document.getElementById("issue_modal").showModal()
 }
 
 
@@ -194,6 +248,29 @@ function displayIssueDetail (details){
 
 
 
+// search all Issues
+document.getElementById("search-issues").addEventListener('click', () => {
+    const input = document.getElementById("input-issue");
+    const searchValue = input.value;
+    
+    if(searchValue === ""){
+        alert("Please input search")
+        return;
+    }
+    removeBtn()
+    
+    showLoading()
+    fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues`)
+        .then(res => res.json())
+        .then(data => {
+            const allIssues = data.data;
+            const filterIssue = allIssues.filter(issue => issue.title.toLowerCase().includes(searchValue))
+            displayIssue(filterIssue)
+            hideLoading()
+        })
+
+
+})
 
 
 
