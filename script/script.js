@@ -163,6 +163,7 @@ function displayIssue(data) {
 function createElements(labels) {
     const showLabels = labels.map(label => `<p class="badge badge-accent text-[0.8rem] py-5""><i class="fa-solid fa-bug"></i>${label}</p>`)
     return showLabels.join(" ");
+    
 }
 
 // <div class="badge badge-accent text-[0.8rem] py-5">${createElements(card.labels)}</div>
