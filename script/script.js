@@ -113,7 +113,7 @@ function displayIssue(data) {
         // const borderColor = card.status === "open"? "border-primary" : "border-success";
         let iconColor = 0;
         let borderColor = 0;
-        if (card.status === "open") {
+        if (card.status === "closed") {
             borderColor = "border-primary";
             iconColor = "text-primary"
         } else {
@@ -122,13 +122,26 @@ function displayIssue(data) {
         }
 
 
+
+
+        // const priority = card.priority === "high"? "badge-success": "badge-error";
+        let priority = 0;
+        if (card.priority === "high") {
+            priority = "bg-gray-900"
+        } else if (card.priority === "medium") {
+            priority = "bg-gray-600"
+        } else {
+            priority = "bg-gray-400"
+        }
+
+        issueCard.onclick =()=>onclick=issueDetail(card.id)
         issueCard.className = `bg-white shadow-xl ${borderColor} border-t-5  rounded-[8px]`;
         issueCard.innerHTML = `
              <div class=" border-b-2 border-gray-300">
-                    <div class="space-y-5 py-5 px-3">
+                    <div class="space-y-4 py-5 px-3">
                         <div class="flex justify-between items-center">
                             <i class="fa-solid fa-circle ${iconColor}"></i>
-                            <div class="text-white badge badge-error px-7 font-bold">${card.priority}</div>
+                            <div class="text-white badge ${priority} px-7 font-bold">${card.priority}</div>
                         </div>
 
                         <div>
@@ -142,19 +155,47 @@ function displayIssue(data) {
                         </div>
                     </div>
             </div>
-            <div class="py-4 px-3 text-[0.9rem] text-gray-600">
+            <div class="py-1.5 px-3 text-[0.9rem] text-gray-600">
                 <p class="mb-2"># ${card.assignee ? card.assignee : "No Assignee"}</p>
                 <p>${card.createdAt}</p>
             </div>
         `
         allIssues.appendChild(issueCard)
     });
-
 }
 
 
 
+
+
 issueLoad();
+
+async function issueDetail(id){
+    res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`)
+    data = await res.json()
+    displayIssueDetail(data.data)
+}
+
+function displayIssueDetail (details){
+    const detailIssueContainer = document.getElementById("details-issue-container")
+    
+    const detail = document.createElement("div");
+
+    detail.innerHTML = `   
+        <p>Tanvir</p>
+    `;
+    
+    detailIssueContainer.appendChild(detail);
+}
+
+
+
+
+
+
+
+
+
 
 
 
