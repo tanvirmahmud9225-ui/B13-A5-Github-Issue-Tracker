@@ -131,6 +131,8 @@ function displayIssue(data) {
             priority = "bg-gray-400"
         }
 
+
+        const date = new Date(card.createdAt).toLocaleDateString();     
         issueCard.onclick = () => onclick = issueDetail(card.id)
         issueCard.className = `bg-white shadow-xl ${borderColor} border-t-5  rounded-[8px]`;
         issueCard.innerHTML = `
@@ -152,8 +154,8 @@ function displayIssue(data) {
                     </div>
             </div>
             <div class="py-1.5 px-3 text-[0.9rem] text-gray-600">
-                <p class="mb-2"># ${card.assignee ? card.assignee : "No Assignee"}</p>
-                <p>${card.createdAt}</p>
+                <p class="mb-2"># ${card.id} ${card.assignee ? card.assignee : "No Assignee"}</p>
+                <p>${date}</p>
             </div>
         `
         allIssues.appendChild(issueCard)
