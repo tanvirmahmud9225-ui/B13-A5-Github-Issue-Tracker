@@ -132,7 +132,7 @@ function displayIssue(data) {
         }
 
 
-        const date = new Date(card.createdAt).toLocaleDateString();     
+        const date = new Date(card.createdAt).toLocaleDateString();
         issueCard.onclick = () => onclick = issueDetail(card.id)
         issueCard.className = `bg-white shadow-xl ${borderColor} border-t-5  rounded-[8px]`;
         issueCard.innerHTML = `
@@ -163,9 +163,20 @@ function displayIssue(data) {
 }
 
 function createElements(labels) {
-    const showLabels = labels.map(label => `<p class="badge badge-accent text-[0.8rem] py-5""><i class="fa-solid fa-bug"></i>${label}</p>`)
-    return showLabels.join(" ");
-    
+    const icon = {
+        bug: "fa-bug",
+        "help wanted": "fa-life-ring",
+        documentation: "fa-life-ring",
+        "good first issue": "fa-life-ring",
+        enhancement: "fa-wand-magic-sparkles"
+    }
+
+    const showLabels = labels.map(label =>
+        `<p class="badge badge-warning text-[0.8rem] py-3"">
+               <i class="fa-solid ${icon[label]}"></i> ${label}
+        </p>`).join(" ")
+    return showLabels;
+
 }
 
 // <div class="badge badge-accent text-[0.8rem] py-5">${createElements(card.labels)}</div>
@@ -255,13 +266,13 @@ function displayIssueDetail(details) {
 document.getElementById("search-issues").addEventListener('click', () => {
     const input = document.getElementById("input-issue");
     const searchValue = input.value;
-    
-    if(searchValue === ""){
+
+    if (searchValue === "") {
         alert("Please input search")
         return;
     }
     removeBtn()
-    
+
     showLoading()
     fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues`)
         .then(res => res.json())
